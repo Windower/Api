@@ -2,6 +2,6 @@
 
 public enum Repository {
 	Launcher,
-	Hook,
+	Windower4,
 	Plugins,
 }
