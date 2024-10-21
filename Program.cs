@@ -32,6 +32,7 @@ app.MapPost("/api/gh", async (GitHubArtifacts request) => {
 
 	try {
 		var handler = (UpdateHandler)(request.Repo switch {
+			Repository.Resources => new ResourcesUpdateHandler(),
 			Repository.Plugins => new PluginsUpdateHandler(),
 			Repository.Launcher => new LauncherUpdateHandler(),
 			Repository.Windower4 => new HookUpdateHandler(),
