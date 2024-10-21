@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -9,12 +8,10 @@ namespace Windower.Api;
 public class PluginsUpdateHandler : VersionedUpdateHandler {
 	protected override String RelativeTargetPath { get; } = "plugins";
 
-	private String PluginsPath { get; set; } = null!;
 	private XElement PluginsNode { get; set; } = null!;
 	private IDictionary<String, Item> Plugins { get; set; } = new Dictionary<String, Item>();
 
 	protected override void Initialize() {
-		PluginsPath = Path.Combine(DevPath, "plugins");
 		PluginsNode = Manifest.Root!.Element("plugins")!;
 		Plugins = PluginsNode.Elements("plugin").ToDictionary(
 			element => element.Element("name")!.Value.ToLowerInvariant(),
