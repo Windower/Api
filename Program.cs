@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -45,10 +46,12 @@ app.MapPost("/api/gh", async (GitHubArtifacts request) => {
 
 			foreach (var entry in zip.Entries) {
 				using var entryStream = entry.Open();
-				await handler.CheckVersion(entry.Name, entryStream);
+				using var memoryStream = new MemoryStream();
+				await entryStream.CopyToAsync(memoryStream);
+				await handler.CheckVersion(entry.Name, memoryStream);
 			}
 
-			await handler.Finalize(config);
+			await handler.Finalize();
 		}
 
 		return Results.Ok();

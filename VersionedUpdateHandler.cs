@@ -21,21 +21,15 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 	public sealed override async Task Initialize(Config config) {
 		DevPath = Path.Combine(config.FilesPath, "4", "dev");
 		ManifestPath = Path.Combine(DevPath, "manifest.xml");
-		Manifest = await ReadManifest();
 		TargetPath = Path.Combine(DevPath, RelativeTargetPath);
+		using var stream = File.Open(ManifestPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+		Manifest = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
 
 		Initialize();
 	}
 
-	private async Task<XDocument> ReadManifest() {
-		using var stream = File.Open(ManifestPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-		return await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
-	}
-
-	public sealed override async Task CheckVersion(String filename, Stream stream) {
-		using var memoryStream = new MemoryStream();
-		await stream.CopyToAsync(memoryStream);
-		var buffer = memoryStream.ToArray();
+	public sealed override async Task CheckVersion(String filename, MemoryStream stream) {
+		var buffer = stream.ToArray();
 		var peFile = new PeFile(buffer);
 		var version = Version.Parse(peFile.Resources!.VsVersionInfo!.StringFileInfo.StringTable[0].FileVersion!.Replace(", ", "."));
 		var name = filename[..^4];
@@ -50,30 +44,19 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 			return;
 		}
 
-		using var file = File.Open(Path.Combine(TargetPath, filename), FileMode.Create, FileAccess.Write, FileShare.None);
-		using var ms = new MemoryStream(buffer);
-		await ms.CopyToAsync(file);
+		await SaveFile(stream, Path.Combine(TargetPath, filename));
 
 		item.Element.SetElementValue("version", version);
 
 		Changed = true;
 	}
 
-	public sealed override async Task Finalize(Config config) {
+	public sealed override async Task Finalize() {
 		if (!Changed) {
 			return;
 		}
 
-		using var file = File.Open(ManifestPath, FileMode.Create, FileAccess.Write, FileShare.None);
-		using var writer = XmlWriter.Create(file, new() {
-			Async = true,
-			Encoding = new UTF8Encoding(false),
-			OmitXmlDeclaration = true,
-			Indent = true,
-			NewLineChars = "\n",
-			NewLineHandling = NewLineHandling.Entitize,
-		});
-		await Manifest.SaveAsync(writer, CancellationToken.None);
+		await SaveXml(Manifest, ManifestPath);
 	}
 
 	protected abstract void Initialize();
