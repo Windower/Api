@@ -8,12 +8,10 @@ namespace Windower.Api;
 public class PluginsUpdateHandler : VersionedUpdateHandler {
 	protected override String RelativeTargetPath { get; } = "plugins";
 
-	private XElement PluginsNode { get; set; } = null!;
 	private IDictionary<String, Item> Plugins { get; set; } = new Dictionary<String, Item>();
 
 	protected override void Initialize() {
-		PluginsNode = Manifest.Root!.Element("plugins")!;
-		Plugins = PluginsNode.Elements("plugin").ToDictionary(
+		Plugins = Manifest.Root!.Element("plugins")!.Elements("plugin").ToDictionary(
 			element => element.Element("name")!.Value.ToLowerInvariant(),
 			Item.Parse
 		);

@@ -32,6 +32,8 @@ app.MapPost("/api/gh", async (GitHubArtifacts request) => {
 	try {
 		var handler = (UpdateHandler)(request.Repo switch {
 			Repository.Plugins => new PluginsUpdateHandler(),
+			Repository.Launcher => new LauncherUpdateHandler(),
+			Repository.Hook => new HookUpdateHandler(),
 			_ => throw new Exception($"Unhandled repository: {request.Repo}"),
 		});
 

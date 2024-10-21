@@ -50,7 +50,7 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 			return;
 		}
 
-		using var file = File.Open(Path.Combine(TargetPath, item.Name ?? name), FileMode.Create, FileAccess.Write, FileShare.None);
+		using var file = File.Open(Path.Combine(TargetPath, filename), FileMode.Create, FileAccess.Write, FileShare.None);
 		using var ms = new MemoryStream(buffer);
 		await ms.CopyToAsync(file);
 
