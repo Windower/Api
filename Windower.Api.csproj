@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
+		<PackageReference Include="PeNet" Version="3.0.0" />
 	</ItemGroup>
 
 </Project>
