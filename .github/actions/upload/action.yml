@@ -17,5 +17,5 @@ inputs:
     description: "File extension to filter for"
     required: false
 runs:
-  using: "node20'
-  main: "upload.js'
+  using: "node20"
+  main: "upload.js"
