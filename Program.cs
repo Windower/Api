@@ -40,11 +40,16 @@ app.MapPost("/api/gh", async (GitHubActionRequest action) => {
 			_ => throw new Exception($"Unhandled repository: {action.Repository}"),
 		});
 
-		var request = new HttpRequestMessage(HttpMethod.Get, action.ArtifactUrl);
+		Console.WriteLine($"Received ID: {action.ArtifactId}");
+		var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/Windower/{action.Repository}/actions/artifacts{action.ArtifactId}/zip");
 		request.Headers.Accept.Add(new("application/vnd.github+json"));
 		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", action.GitHubToken);
+		request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
 		using var response = await rest.SendAsync(request);
-		using var zipStream = await response.Content.ReadAsStreamAsync();
+		var url = response.Headers.GetValues("Location").Single();
+		Console.WriteLine($"Received URL: {url}");
+
+		using var zipStream = await rest.GetStreamAsync(url);
 		using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
 
 		using (await mutex.LockAsync()) {
