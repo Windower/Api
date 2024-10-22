@@ -24,7 +24,7 @@ try {
 	}
 	const message = Buffer.concat(chunks).toString("utf8");
 
-	const fn = (response.statusCode === 200 ? core.info : core.setFailed);
+	const fn = (response.status === 200 ? core.info : core.setFailed);
 	fn(`${response.statusText} (${response.status})${(message !== "" ? `: ${message}` : "")}`);
 } catch (error) {
 	core.setFailed(`Error during processing: ${error}`);
