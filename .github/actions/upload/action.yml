@@ -10,6 +10,7 @@ inputs:
   directory:
     required: true
   extension:
+    required: false
 runs:
   using: "node20'
   main: "upload.js'
