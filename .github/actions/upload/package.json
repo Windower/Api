@@ -1,0 +1,12 @@
+{
+  "name": "upload",
+  "version": "1.0.0",
+  "main": "upload.js",
+  "author": "Windower dev team",
+  "type": "module",
+  "license": "UNLICENSED",
+  "description": "Uploads build artifacts to the Windower server",
+  "dependencies": {
+    "@actions/core": "^1.11.1"
+  }
+}

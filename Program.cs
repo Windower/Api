@@ -1,13 +1,12 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Nito.AsyncEx;
@@ -26,37 +25,29 @@ var app = builder.Build();
 
 var mutex = new AsyncLock();
 var rest = new HttpClient();
-app.MapPost("/api/gh", async (GitHubActionRequest action) => {
-	if (action.ApiKey != config.ApiKey) {
-		return Results.StatusCode(403);
-	}
+app.MapPost("/api/gh", async (HttpRequest request) => {
+	request.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>()!.MaxRequestBodySize = 100 * 1024 * 1024;
 
 	try {
-		var handler = (UpdateHandler)(action.Repository switch {
-			Repository.Resources => new ResourcesUpdateHandler(),
-			Repository.Plugins => new PluginsUpdateHandler(),
-			Repository.Launcher => new LauncherUpdateHandler(),
-			Repository.Windower4 => new HookUpdateHandler(),
-			_ => throw new Exception($"Unhandled repository: {action.Repository}"),
+		var apiKey = GetField("api-key", "API key");
+		if (apiKey != config.ApiKey) {
+			return Results.StatusCode(403);
+		}
+
+		var repository = GetField("repository", "repository");
+		var handler = (UpdateHandler)(repository switch {
+			"Resources" => new ResourcesUpdateHandler(),
+			"Plugins" => new PluginsUpdateHandler(),
+			"Launcher" => new LauncherUpdateHandler(),
+			"Windower4" => new HookUpdateHandler(),
+			_ => throw new Exception($"Unhandled repository: {repository}"),
 		});
-
-		Console.WriteLine($"Received ID: {action.ArtifactId}");
-		var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/Windower/{action.Repository}/actions/artifacts{action.ArtifactId}/zip");
-		request.Headers.Accept.Add(new("application/vnd.github+json"));
-		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", action.GitHubToken);
-		request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
-		using var response = await rest.SendAsync(request);
-		var url = response.Headers.GetValues("Location").Single();
-		Console.WriteLine($"Received URL: {url}");
-
-		using var zipStream = await rest.GetStreamAsync(url);
-		using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
 
 		using (await mutex.LockAsync()) {
 			await handler.Initialize(config);
 
-			foreach (var entry in zip.Entries) {
-				using var entryStream = entry.Open();
+			foreach (var entry in request.Form.Files) {
+				using var entryStream = entry.OpenReadStream();
 				using var memoryStream = new MemoryStream();
 				await entryStream.CopyToAsync(memoryStream);
 				await handler.CheckVersion(entry.Name, memoryStream);
@@ -66,6 +57,9 @@ app.MapPost("/api/gh", async (GitHubActionRequest action) => {
 		}
 
 		return Results.Ok();
+
+		String GetField(String key, String identifier) =>
+			request.Form[key].SingleOrDefault() ?? throw new Exception($"No {identifier} specified.");
 	} catch (Exception ex) {
 		return Results.BadRequest(ex.Message);
 	}

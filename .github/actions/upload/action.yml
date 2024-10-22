@@ -1,0 +1,15 @@
+name: "Upload"
+description: "Uploads build artifacts to the Windower server"
+inputs:
+  url:
+    required: true
+  api-key:
+    required: true
+  repository:
+    required: true
+  directory:
+    required: true
+  extension:
+runs:
+  using: "node20'
+  main: "upload.js'
