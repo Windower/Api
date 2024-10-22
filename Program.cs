@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
@@ -25,25 +26,29 @@ var app = builder.Build();
 
 var mutex = new AsyncLock();
 var rest = new HttpClient();
-app.MapPost("/api/gh", async (GitHubArtifacts request) => {
-	if (request.Key != config.ApiKey) {
+app.MapPost("/api/gh", async (GitHubActionRequest action) => {
+	if (action.ApiKey != config.ApiKey) {
 		return Results.StatusCode(403);
 	}
 
 	try {
-		var handler = (UpdateHandler)(request.Repo switch {
+		var handler = (UpdateHandler)(action.Repository switch {
 			Repository.Resources => new ResourcesUpdateHandler(),
 			Repository.Plugins => new PluginsUpdateHandler(),
 			Repository.Launcher => new LauncherUpdateHandler(),
 			Repository.Windower4 => new HookUpdateHandler(),
-			_ => throw new Exception($"Unhandled repository: {request.Repo}"),
+			_ => throw new Exception($"Unhandled repository: {action.Repository}"),
 		});
+
+		var request = new HttpRequestMessage(HttpMethod.Get, action.ArtifactUrl);
+		request.Headers.Accept.Add(new("application/vnd.github+json"));
+		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", action.GitHubToken);
+		using var response = await rest.SendAsync(request);
+		using var zipStream = await response.Content.ReadAsStreamAsync();
+		using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read);
 
 		using (await mutex.LockAsync()) {
 			await handler.Initialize(config);
-
-			using var responseStream = await rest.GetStreamAsync(request.Url);
-			using var zip = new ZipArchive(responseStream, ZipArchiveMode.Read);
 
 			foreach (var entry in zip.Entries) {
 				using var entryStream = entry.Open();
