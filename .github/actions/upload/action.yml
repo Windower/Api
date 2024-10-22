@@ -2,14 +2,19 @@ name: "Upload"
 description: "Uploads build artifacts to the Windower server"
 inputs:
   url:
+    description: "URL of the file server"
     required: true
   api-key:
+    description: "API key to authenticate against the file server"
     required: true
   repository:
+    description: "GitHub repository name under the Windower organization"
     required: true
   directory:
+    description: "Directory containing the build results to upload"
     required: true
   extension:
+    description: "File extension to filter for"
     required: false
 runs:
   using: "node20'
