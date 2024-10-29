@@ -26,7 +26,7 @@ var app = builder.Build();
 var mutex = new AsyncLock();
 var rest = new HttpClient();
 
-app.MapGet("/api/ping", () => "Pong");
+app.MapGet("/api/ping", () => "pong");
 
 app.MapPost("/api/gh", async (HttpRequest request) => {
 	request.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>()!.MaxRequestBodySize = 100 * 1024 * 1024;
