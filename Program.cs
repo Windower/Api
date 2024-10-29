@@ -9,12 +9,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Nito.AsyncEx;
 using Windower.Api;
 
 var config = await Config.Load(args.Single());
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSystemd();
 
 builder.Services.Configure<JsonOptions>(options => {
 	options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
