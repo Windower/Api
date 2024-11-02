@@ -3,7 +3,7 @@ import path from "path";
 import core from "@actions/core";
 
 try {
-	core.setOutput("Starting upload action");
+	core.info("Starting upload action");
 
 	const url = core.getInput("url");
 	const apiKey = core.getInput("api-key");
@@ -14,14 +14,14 @@ try {
 	const form = new FormData();
 	form.append("api-key", apiKey);
 	form.append("repository", repository);
-	core.setOutput(`Packing files in ${directory}:`);
+	core.info(`Packing files in ${directory}:`);
 	for (const relative of (await fs.readdir(directory)).filter(relative => !extension || relative.endsWith(`.${extension}`))) {
-		core.setOutput(`  Reading ${relative}`);
+		core.info(`  Reading ${relative}`);
 		form.append(relative, new Blob([await fs.readFile(path.join(directory, relative))]));
 	}
-	core.setOutput("Finished packing files.");
+	core.info("Finished packing files.");
 
-	core.setOutput(`Calling ${url}`);
+	core.info(`Calling ${url}`);
 	const response = await fetch(url, { method: "POST", body: form });
 
 	const chunks = [];
