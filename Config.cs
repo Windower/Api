@@ -9,6 +9,7 @@ namespace Windower.Api;
 public class Config {
 	public String ApiKey { get; set; } = null!;
 	public String FilesPath { get; set; } = null!;
+	public String WebsitePath { get; set; } = null!;
 
 	public static async Task<Config> Load(String[] args) {
 		if (args.Length < 1) {

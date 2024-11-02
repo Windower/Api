@@ -46,6 +46,7 @@ app.MapPost("/gh", async (HttpRequest request) => {
 			"Plugins" => new PluginsUpdateHandler(),
 			"Launcher" => new LauncherUpdateHandler(),
 			"Windower4" => new HookUpdateHandler(),
+			"windower_www" => new WebsiteUpdateHandler(),
 			_ => throw new Exception($"Unhandled repository: {repository}"),
 		});
 
