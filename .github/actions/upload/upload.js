@@ -3,6 +3,8 @@ import path from "path";
 import core from "@actions/core";
 
 try {
+	core.setOutput("Starting upload action");
+
 	const url = core.getInput("url");
 	const apiKey = core.getInput("api-key");
 	const repository = core.getInput("repository");
@@ -19,7 +21,7 @@ try {
 	}
 	core.setOutput("Finished packing files.");
 
-	core.setOutput(`Calling ${url}...`);
+	core.setOutput(`Calling ${url}`);
 	const response = await fetch(url, { method: "POST", body: form });
 
 	const chunks = [];
