@@ -18,7 +18,7 @@ try {
 	form.append("repository", repository);
 	core.info(`Packing files in ${directory}:`);
 	for (const entry of (await fs.readdir(directory, { recursive: true, withFileTypes: true })).filter(entry => entry.isFile() && (!extension || entry.name.endsWith(`.${extension}`)))) {
-		const relative = path.join(entry.parentPath, entry.name).substring(dirLength);
+		const relative = path.join(entry.parentPath, entry.name).substring(dirLength).replaceAll("\\", "/");
 		core.info(`  Reading ${relative}`);
 		form.append(relative, new Blob([await fs.readFile(path.join(directory, relative))]));
 	}
