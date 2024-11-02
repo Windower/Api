@@ -14,6 +14,7 @@ public abstract class UpdateHandler {
 	public abstract Task Finalize();
 
 	protected async Task SaveFile(MemoryStream stream, String path) {
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		stream.Seek(0, SeekOrigin.Begin);
 		using var file = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
 		await stream.CopyToAsync(file);
