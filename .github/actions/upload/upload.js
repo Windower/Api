@@ -33,5 +33,6 @@ try {
 	const fn = (response.status === 200 ? core.info : core.setFailed);
 	fn(`  ${response.statusText} (${response.status})${(message !== "" ? `: ${message}` : "")}`);
 } catch (error) {
-	core.setFailed(`Error during processing: ${error}`);
+	core.setFailed("Error during processing:");
+	core.setFailed(error);
 }
