@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Nito.AsyncEx;
 using Windower.Api;
 
-var config = await Config.Load(args.Single());
+var config = await Config.Load(args);
 
 var builder = WebApplication.CreateBuilder(args);
 

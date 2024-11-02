@@ -10,9 +10,23 @@ public class Config {
 	public String ApiKey { get; set; } = null!;
 	public String FilesPath { get; set; } = null!;
 
-	public static async Task<Config> Load(String path) {
-		await using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
-		return JsonSerializer.Deserialize<Config>(stream, SerializerSettings)!;
+	public static async Task<Config> Load(String[] args) {
+		if (args.Length < 1) {
+			Console.WriteLine("No input file specified.");
+			Environment.Exit(1);
+			return default;
+		}
+
+		try {
+			var path = args[0];
+			await using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
+			return JsonSerializer.Deserialize<Config>(stream, SerializerSettings)!;
+		} catch (Exception e) {
+			Console.WriteLine($"Invalid input file: " + e.Message);
+			Console.WriteLine(e.StackTrace);
+			Environment.Exit(1);
+			throw;
+		}
 	}
 
 	private static readonly JsonSerializerOptions SerializerSettings = new() {
