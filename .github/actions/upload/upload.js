@@ -15,9 +15,10 @@ try {
 	form.append("api-key", apiKey);
 	form.append("repository", repository);
 	core.info(`Packing files in ${directory}:`);
-	for (const relative of (await fs.readdir(directory)).filter(relative => !extension || relative.endsWith(`.${extension}`))) {
-		core.info(`  Reading ${relative}`);
-		form.append(relative, new Blob([await fs.readFile(path.join(directory, relative))]));
+	for (const entry of (await fs.readdir(directory, { recursive: true, withFileTypes: true })).filter(entry => entry.isFile && (!extension || entry.name.endsWith(`.${extension}`)))) {
+		core.info(`  Reading ${entry.name}`);
+		core.info(`    ${entry.parentPath}`);
+		form.append(relative, new Blob([await fs.readFile(path.join(directory, entry.name))]));
 	}
 	core.info("Finished packing files.");
 
