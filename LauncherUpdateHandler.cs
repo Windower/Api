@@ -2,6 +2,6 @@
 
 namespace Windower.Api;
 
-public class LauncherUpdateHandler : SingleItemUpdateHandler {
+public class LauncherUpdateHandler : SingleVersionedUpdateHandler {
 	protected override String ElementName => "launcher";
 }

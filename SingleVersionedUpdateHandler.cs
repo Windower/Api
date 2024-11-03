@@ -2,7 +2,7 @@
 
 namespace Windower.Api;
 
-public abstract class SingleItemUpdateHandler : VersionedUpdateHandler {
+public abstract class SingleVersionedUpdateHandler : VersionedUpdateHandler {
 	protected sealed override String RelativeTargetPath => String.Empty;
 
 	protected abstract String ElementName { get; }
