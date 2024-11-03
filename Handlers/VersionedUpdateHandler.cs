@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using PeNet;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public abstract class VersionedUpdateHandler : UpdateHandler {
 	protected String DevPath { get; set; } = null!;

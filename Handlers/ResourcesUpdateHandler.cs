@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public class ResourcesUpdateHandler : UpdateHandler {
 	private String RootPath { get; set; } = null!;

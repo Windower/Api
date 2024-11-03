@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public abstract class UpdateHandler {
 	public abstract Task Initialize(Config config);

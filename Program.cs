@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nito.AsyncEx;
 using Windower.Api;
+using Windower.Api.Handlers;
 
 var config = await Config.Load(args);
 

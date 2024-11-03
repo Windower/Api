@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public class PluginsUpdateHandler : VersionedUpdateHandler {
 	protected override String RelativeTargetPath { get; } = "plugins";

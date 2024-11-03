@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public abstract class SingleVersionedUpdateHandler : VersionedUpdateHandler {
 	protected sealed override String RelativeTargetPath => String.Empty;

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Windower.Api;
+namespace Windower.Api.Handlers;
 
 public abstract class RawUpdateHandler : UpdateHandler {
 	private String RootPath { get; set; } = null!;
