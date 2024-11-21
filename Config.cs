@@ -8,6 +8,7 @@ namespace Windower.Api;
 
 public class Config {
 	public String ApiKey { get; set; } = null!;
+	public String ApiPath { get; set; } = null!;
 	public String FilesPath { get; set; } = null!;
 	public String WebsitePath { get; set; } = null!;
 

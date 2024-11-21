@@ -43,6 +43,7 @@ app.MapPost("/gh", async (HttpRequest request) => {
 
 		var repository = GetField("repository", "repository");
 		var handler = (UpdateHandler)(repository switch {
+			"Branding" => new BrandingUpdateHandler(),
 			"packages" => new PackagesUpdateHandler(),
 			"Resources" => new ResourcesUpdateHandler(),
 			"Plugins" => new PluginsUpdateHandler(),
