@@ -12,7 +12,7 @@ public abstract class RawUpdateHandler : UpdateHandler {
 		return Task.CompletedTask;
 	}
 
-	public override async Task CheckVersion(String filename, MemoryStream stream) =>
+	public override async Task ProcessFile(String filename, MemoryStream stream) =>
 		await SaveFile(stream, Path.Combine(RootPath, filename));
 
 	public override Task Finalize() =>

@@ -60,7 +60,7 @@ app.MapPost("/gh", async (HttpRequest request) => {
 				using var entryStream = entry.OpenReadStream();
 				using var memoryStream = new MemoryStream();
 				await entryStream.CopyToAsync(memoryStream);
-				await handler.CheckVersion(entry.Name, memoryStream);
+				await handler.ProcessFile(entry.Name, memoryStream);
 			}
 
 			await handler.Finalize();

@@ -26,7 +26,7 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 		Initialize();
 	}
 
-	public sealed override async Task CheckVersion(String filename, MemoryStream stream) {
+	public sealed override async Task ProcessFile(String filename, MemoryStream stream) {
 		var buffer = stream.ToArray();
 		var peFile = new PeFile(buffer);
 		var version = Version.Parse(peFile.Resources!.VsVersionInfo!.StringFileInfo.StringTable[0].FileVersion!.Replace(", ", "."));

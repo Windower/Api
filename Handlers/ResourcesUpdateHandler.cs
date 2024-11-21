@@ -20,7 +20,7 @@ public class ResourcesUpdateHandler : UpdateHandler {
 		return Task.CompletedTask;
 	}
 
-	public override async Task CheckVersion(String filename, MemoryStream stream) {
+	public override async Task ProcessFile(String filename, MemoryStream stream) {
 		Files.Add(filename[..^4]);
 
 		var buffer = stream.ToArray();

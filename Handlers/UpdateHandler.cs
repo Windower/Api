@@ -10,7 +10,7 @@ namespace Windower.Api.Handlers;
 
 public abstract class UpdateHandler {
 	public abstract Task Initialize(Config config);
-	public abstract Task CheckVersion(String filename, MemoryStream stream);
+	public abstract Task ProcessFile(String filename, MemoryStream stream);
 	public abstract Task Finalize();
 
 	protected async Task SaveFile(MemoryStream stream, String path) {
