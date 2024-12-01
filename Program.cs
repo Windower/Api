@@ -41,9 +41,9 @@ app.MapPost("/gh", async (HttpRequest request) => {
 			return Results.StatusCode(403);
 		}
 
-		var repository = GetField("repository", "repository");
+		var repository = GetField("repository");
 		var handler = (UpdateHandler)(repository switch {
-			"Branding" => new BrandingUpdateHandler(),
+			"Branding" => new BrandingUpdateHandler(GetField("branch")),
 			"packages" => new PackagesUpdateHandler(),
 			"Resources" => new ResourcesUpdateHandler(),
 			"Plugins" => new PluginsUpdateHandler(),
@@ -68,8 +68,8 @@ app.MapPost("/gh", async (HttpRequest request) => {
 
 		return Results.Ok();
 
-		String GetField(String key, String identifier) =>
-			request.Form[key].SingleOrDefault() ?? throw new Exception($"No {identifier} specified.");
+		String GetField(String key, String? identifier = null) =>
+			request.Form[key].SingleOrDefault() ?? throw new Exception($"No {identifier ?? key} specified.");
 	} catch (Exception ex) {
 		return Results.BadRequest(ex.Message);
 	}

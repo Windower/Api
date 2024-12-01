@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Windower.Api.Handlers;
 
-public class BrandingUpdateHandler : RawUpdateHandler {
+public class BrandingUpdateHandler(String branch) : RawUpdateHandler {
 	protected override String GetRoot(Config config) =>
-		Path.Combine(config.ApiPath, "5", "branding");
+		Path.Combine(config.ApiPath, "branding", branch);
 }
