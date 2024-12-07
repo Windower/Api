@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,14 +13,14 @@ public class ResourcesUpdateHandler : UpdateHandler {
 	private String ResourcesPath { get; set; } = null!;
 	private ICollection<String> Files { get; set; } = [];
 
-	public override Task Initialize(Config config) {
+	public override ValueTask Initialize(Config config) {
 		RootPath = Path.Combine(config.FilesPath, "res");
 		ManifestPath = Path.Combine(RootPath, "manifest.xml");
 		ResourcesPath = Path.Combine(RootPath, "lua");
-		return Task.CompletedTask;
+		return ValueTask.CompletedTask;
 	}
 
-	public override async Task ProcessFile(String filename, MemoryStream stream) {
+	public override async ValueTask ProcessFile(String filename, MemoryStream stream) {
 		Files.Add(filename[..^4]);
 
 		var buffer = stream.ToArray();
@@ -33,6 +33,6 @@ public class ResourcesUpdateHandler : UpdateHandler {
 		await SaveFile(stream, path);
 	}
 
-	public override async Task Finalize() =>
+	public override async ValueTask Finalize() =>
 		await SaveXml(new XDocument(new XElement("manifest", Files.Select(file => new XElement("file", file)))), ManifestPath);
 }

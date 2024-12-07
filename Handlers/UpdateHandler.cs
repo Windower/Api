@@ -9,18 +9,18 @@ using System.Xml.Linq;
 namespace Windower.Api.Handlers;
 
 public abstract class UpdateHandler {
-	public abstract Task Initialize(Config config);
-	public abstract Task ProcessFile(String filename, MemoryStream stream);
-	public abstract Task Finalize();
+	public abstract ValueTask Initialize(Config config);
+	public abstract ValueTask ProcessFile(String filename, MemoryStream stream);
+	public abstract ValueTask Finalize();
 
-	protected async Task SaveFile(MemoryStream stream, String path) {
+	protected async ValueTask SaveFile(MemoryStream stream, String path) {
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		stream.Seek(0, SeekOrigin.Begin);
 		using var file = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
 		await stream.CopyToAsync(file);
 	}
 
-	protected async Task SaveXml(XDocument document, String path) {
+	protected async ValueTask SaveXml(XDocument document, String path) {
 		using var file = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
 		using var writer = XmlWriter.Create(file, new() {
 			Async = true,

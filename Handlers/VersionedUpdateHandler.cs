@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 
 	protected abstract String RelativeTargetPath { get; }
 
-	public sealed override async Task Initialize(Config config) {
+	public sealed override async ValueTask Initialize(Config config) {
 		DevPath = Path.Combine(config.FilesPath, "4", "dev");
 		ManifestPath = Path.Combine(DevPath, "manifest.xml");
 		TargetPath = Path.Combine(DevPath, RelativeTargetPath);
@@ -26,7 +26,7 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 		Initialize();
 	}
 
-	public sealed override async Task ProcessFile(String filename, MemoryStream stream) {
+	public sealed override async ValueTask ProcessFile(String filename, MemoryStream stream) {
 		var buffer = stream.ToArray();
 		var peFile = new PeFile(buffer);
 		var version = Version.Parse(peFile.Resources!.VsVersionInfo!.StringFileInfo.StringTable[0].FileVersion!.Replace(", ", "."));
@@ -49,7 +49,7 @@ public abstract class VersionedUpdateHandler : UpdateHandler {
 		Changed = true;
 	}
 
-	public sealed override async Task Finalize() {
+	public sealed override async ValueTask Finalize() {
 		if (!Changed) {
 			return;
 		}

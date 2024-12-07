@@ -12,7 +12,7 @@ public class Config {
 	public String FilesPath { get; set; } = null!;
 	public String WebsitePath { get; set; } = null!;
 
-	public static async Task<Config> Load(String[] args) {
+	public static async ValueTask<Config> Load(String[] args) {
 		if (args.Length < 1) {
 			Console.WriteLine("No input file specified.");
 			Environment.Exit(1);
